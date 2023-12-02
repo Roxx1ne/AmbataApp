@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "311150669524",
+    "project_id": "ambatabakery",
+    "storage_bucket": "ambatabakery.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311150669524:android:9ef102e2a2a57271cd5541",
+        "android_client_info": {
+          "package_name": "com.example.ambatabakery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5EfOPqUSCKQOJbwBPLcpFYg5oukZo-U4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
