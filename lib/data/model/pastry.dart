@@ -6,7 +6,7 @@ class Pastry {
   final double price;
   final List<Flavour> flavours;
 
-  Pastry(this.id, this.name, this.price): flavours = List.empty();
+  Pastry(this.id, this.name, this.price) : flavours = List.empty();
 
   Pastry.flavourful(this.id, this.name, this.price, this.flavours);
 
@@ -14,5 +14,5 @@ class Pastry {
   int get hashCode => id;
 
   @override
-  bool operator == (Object other) => other is Pastry && other.id == id;
+  bool operator ==(Object other) => other is Pastry && other.id == id;
 }

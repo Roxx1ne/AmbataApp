@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'signup_screen.dart';
-import 'home_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -11,8 +10,8 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  TextEditingController _passwordTextController = TextEditingController();
-  TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _passwordTextController = TextEditingController();
+  final TextEditingController _emailTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +55,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     labelText: "Enter Email",
                     labelStyle: TextStyle(color: Colors.black54),
-                    filled: false, // Tidak menggunakan warna latar belakang
+                    filled: false,
+                    // Tidak menggunakan warna latar belakang
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
@@ -91,7 +91,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     labelText: "Enter Password",
                     labelStyle: TextStyle(color: Colors.black54),
-                    filled: false, // Tidak menggunakan warna latar belakang
+                    filled: false,
+                    // Tidak menggunakan warna latar belakang
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
@@ -119,12 +120,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 ElevatedButton(
                   onPressed: () {
                     // Navigasi ke halaman HomeScreen
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ),
-                    );
+                    GoRouter.of(context).replaceNamed('home');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black, // background color
@@ -148,12 +144,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 InkWell(
                   onTap: () {
                     // Navigasi ke halaman register
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SignupScreen(),
-                      ),
-                    );
+                    GoRouter.of(context).replaceNamed('sign_in');
                   },
                   child: Text(
                     "Don't have an account? Register",
