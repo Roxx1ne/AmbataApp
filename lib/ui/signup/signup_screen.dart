@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'home_screen.dart';
+
+import '../home/home_screen.dart';
 
 class SignupScreen extends StatelessWidget {
-  TextEditingController _emailTextController = TextEditingController();
-  TextEditingController _passwordTextController = TextEditingController();
+  SignupScreen({super.key});
+
+  final TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _passwordTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,8 @@ class SignupScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(color: Colors.black),
                   ),
-                  filled: false, // Tidak menggunakan warna latar belakang
+                  filled: false,
+                  // Tidak menggunakan warna latar belakang
                   fillColor: Colors.transparent,
                 ),
               ),
@@ -59,7 +63,8 @@ class SignupScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(color: Colors.black),
                   ),
-                  filled: false, // Tidak menggunakan warna latar belakang
+                  filled: false,
+                  // Tidak menggunakan warna latar belakang
                   fillColor: Colors.transparent,
                 ),
               ),

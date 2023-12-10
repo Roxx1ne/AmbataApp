@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'signin_screen.dart';
-import 'account_screen.dart';
-import 'search_screen.dart';
+
+import '../account/account_screen.dart';
+import '../search/search_screen.dart';
+import '../signin/signin_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -36,20 +39,19 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.notifications),
-           onPressed: () {
-              // Tambahkan logika untuk menangani aksi ketika ikon cart diklik
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.shopping_cart), 
             onPressed: () {
               // Tambahkan logika untuk menangani aksi ketika ikon cart diklik
             },
           ),
           IconButton(
-            icon: Icon(
-                Icons.logout),
-             onPressed: () {
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              // Tambahkan logika untuk menangani aksi ketika ikon cart diklik
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

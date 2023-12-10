@@ -1,9 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
-import '../../model/pastry.dart';
+
+import '../model/pastry.dart';
 
 class DefaultCartRepository extends ChangeNotifier {
-
   late List<Pastry> _pastryInCart = [];
 
   set pastryInCart(List<Pastry> pastries) {
@@ -23,5 +22,4 @@ class DefaultCartRepository extends ChangeNotifier {
 
     notifyListeners();
   }
-
 }
