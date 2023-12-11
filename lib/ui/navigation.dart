@@ -3,6 +3,18 @@ part of 'app.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+enum TopLevelDestinations {
+  home(path: '/home'),
+  search(path: '/search'),
+  account(path: '/account');
+
+  const TopLevelDestinations({
+    required this.path,
+  });
+
+  final String path;
+}
+
 final router = GoRouter(
   initialLocation: '/splash',
   navigatorKey: _rootNavigatorKey,
@@ -32,23 +44,32 @@ final router = GoRouter(
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
-      builder: (context, state, child) => AmbataScaffold(child: child),
+      builder: (context, state, child) => AmbataScaffold(
+        bottomNavigationBar: AmbataBottomNavigationBar(
+          onDestinationSelected: (index) {
+            GoRouter.of(context)
+                .goNamed(TopLevelDestinations.values[index].name);
+          },
+        ),
+        child: child,
+      ),
       routes: [
         GoRoute(
-          name: 'home',
-          path: '/home',
+          name: TopLevelDestinations.home.name,
+          path: TopLevelDestinations.home.path,
           builder: (context, state) => Center(
-              child: Column(
-            children: [
-              const Text('Home'),
-              ElevatedButton(
-                onPressed: () {
-                  context.goNamed('detail', pathParameters: {'id': '1'});
-                },
-                child: const Text('Detail'),
-              ),
-            ],
-          )),
+            child: Column(
+              children: [
+                const Text('Home'),
+                ElevatedButton(
+                  onPressed: () {
+                    context.goNamed('detail', pathParameters: {'id': '1'});
+                  },
+                  child: const Text('Detail'),
+                ),
+              ],
+            ),
+          ),
           routes: [
             GoRoute(
               name: 'detail',
@@ -66,16 +87,14 @@ final router = GoRouter(
           parentNavigatorKey: _shellNavigatorKey,
         ),
         GoRoute(
-          name: 'search',
-          path: '/search',
-          builder: (context, state) => const Center(
-            child: Text('Search'),
-          ),
+          name: TopLevelDestinations.search.name,
+          path: TopLevelDestinations.search.path,
+          builder: (context, state) => SearchScreen(),
           parentNavigatorKey: _shellNavigatorKey,
         ),
         GoRoute(
-          name: 'account',
-          path: '/account',
+          name: TopLevelDestinations.account.name,
+          path: TopLevelDestinations.account.path,
           builder: (context, state) => const Center(
             child: Text('Account'),
           ),
