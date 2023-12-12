@@ -35,25 +35,23 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return AmbataScaffold(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SearchBar(onSearch: (query) {
-                setState(() {
-                  _isSearched = true;
-                  _query = query;
-                });
-              }),
-              const SizedBox(
-                height: 24.0,
-              ),
-              searchContent(
-                _isSearched,
-              ),
-            ],
-          ),
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SearchBar(onSearch: (query) {
+              setState(() {
+                _isSearched = true;
+                _query = query;
+              });
+            }),
+            const SizedBox(
+              height: 24.0,
+            ),
+            searchContent(
+              _isSearched,
+            ),
+          ],
         ),
       ),
     );
@@ -67,9 +65,101 @@ class SearchPastriesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: grid list pastries
-    return Center(
-      child: Text('Search'),
+    return Flexible(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 32.0,
+            child: Container(
+              color: Colors.lightGreenAccent,
+            ),
+          ),
+          const SizedBox(
+            height: 16.0,
+          ),
+          Flexible(
+            child: GridView.builder(
+              shrinkWrap: true,
+              itemCount: pastries.length,
+              padding: const EdgeInsets.only(bottom: 16.0),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1 / 1.475,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+              ),
+              itemBuilder: (context, index) =>
+                  SearchPastryCard(pastry: pastries[index]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SearchPastryCard extends StatelessWidget {
+  final Pastry pastry;
+
+  const SearchPastryCard({super.key, required this.pastry});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceVariant,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Image(
+            //   image:,
+            //   width: 189.5,
+            //   height: 189.5,
+            //   fit: BoxFit.cover,
+            // ),
+            SizedBox(
+              width: 189.5,
+              height: 189.5,
+              child: Container(
+                color: colorScheme.onSecondaryContainer,
+              ),
+            ),
+            const SizedBox(
+              height: 2.0,
+            ),
+            Container(
+              padding: const EdgeInsets.all(4.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    pastry.name,
+                    style: textTheme.titleSmall,
+                  ),
+                  const SizedBox(
+                    height: 4.0,
+                  ),
+                  Text(
+                    '${pastry.price}',
+                    style: textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -103,7 +193,10 @@ class SearchCategoriesContent extends StatelessWidget {
           itemBuilder: (context, index) => SearchCategoryCard(
             category: categories[index],
           ),
-        )
+        ),
+        const SizedBox(
+          height: 16.0,
+        ),
       ],
     );
   }
@@ -148,7 +241,7 @@ class SearchCategoryCard extends StatelessWidget {
             CircleAvatar(
               backgroundColor: colorScheme.onSecondaryContainer,
               radius: 72,
-            )
+            ),
           ],
         ),
       ),
