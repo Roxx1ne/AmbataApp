@@ -15,21 +15,62 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   bool _isSearched = false;
   String _query = '';
+  final Set<PastryCategory> _selectedCategory = {PastryCategory.none};
 
   late List<Pastry> _pastries;
+  late List<PastryCategory> _pastryCategory;
 
   @override
   void initState() {
     super.initState();
 
     _pastries = context.read<DefaultPastryRepository>().getPastries();
+    _pastryCategory = PastryCategory.values
+        .where((pastry) => pastry != PastryCategory.none)
+        .toList();
   }
 
-  final categories = ['Bread', 'Cake', 'Donut', 'Local'];
+  Widget searchContent(bool isSearched) {
+    if (isSearched) {
+      final pastries = _pastries
+          .where((pastry) =>
+              _selectedCategory.every((pastry) => pastry == PastryCategory.none)
+                  ? true
+                  : _selectedCategory.contains(pastry.category))
+          .where((pastry) => _query.isEmpty
+              ? true
+              : pastry.name.toLowerCase().contains(_query))
+          .toList();
 
-  Widget searchContent(bool isSearched) => isSearched
-      ? SearchPastriesContent(pastries: _pastries)
-      : SearchCategoriesContent(categories: categories);
+      return SearchPastriesContent(
+        pastries: pastries,
+        categories: _pastryCategory,
+        selectedCategories: _selectedCategory,
+        onSelectedFilter: (selected, category) {
+          setState(() {
+            if (selected) {
+              _selectedCategory.add(category);
+            } else {
+              _selectedCategory.remove(category);
+              if (_selectedCategory.isEmpty) {
+                _selectedCategory.add(PastryCategory.none);
+              }
+            }
+          });
+        },
+      );
+    } else {
+      return SearchCategoriesContent(
+        categories: _pastryCategory,
+        onSelectedCategory: (category) {
+          setState(() {
+            _isSearched = true;
+            _selectedCategory.add(category);
+          });
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,39 +101,103 @@ class _SearchScreenState extends State<SearchScreen> {
 
 class SearchPastriesContent extends StatelessWidget {
   final List<Pastry> pastries;
+  final List<PastryCategory> categories;
+  final Set<PastryCategory> selectedCategories;
+  final Function(bool, PastryCategory) onSelectedFilter;
 
-  const SearchPastriesContent({super.key, required this.pastries});
+  const SearchPastriesContent(
+      {super.key,
+      required this.pastries,
+      required this.selectedCategories,
+      required this.onSelectedFilter,
+      required this.categories});
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Flexible(
       child: Column(
         children: [
-          SizedBox(
-            height: 32.0,
-            child: Container(
-              color: Colors.lightGreenAccent,
+          Container(
+            height: 32,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                const Icon(Icons.filter_list_rounded),
+                const SizedBox(
+                  width: 8.0,
+                ),
+                Container(
+                  height: 4.0,
+                  width: 1.0,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(
+                  width: 8.0,
+                ),
+                Row(
+                  children: [
+                    for (var category in categories) ...[
+                      FilterChip(
+                        label: Text(
+                          category.name,
+                          style: textTheme.labelLarge,
+                        ),
+                        backgroundColor: colorScheme.surface,
+                        selected: selectedCategories.contains(category),
+                        onSelected: (selected) {
+                          onSelectedFilter(selected, category);
+                        },
+                      ),
+                      const SizedBox(
+                        width: 16.0,
+                      )
+                    ],
+                  ],
+                )
+              ],
             ),
           ),
           const SizedBox(
             height: 16.0,
           ),
-          Flexible(
-            child: GridView.builder(
-              shrinkWrap: true,
-              itemCount: pastries.length,
-              padding: const EdgeInsets.only(bottom: 16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1 / 1.475,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
+          if (pastries.isNotEmpty) ...[
+            Flexible(
+              child: GridView.builder(
+                shrinkWrap: true,
+                itemCount: pastries.length,
+                padding: const EdgeInsets.only(bottom: 16.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1 / 1.475,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                ),
+                itemBuilder: (context, index) =>
+                    SearchPastryCard(pastry: pastries[index]),
               ),
-              itemBuilder: (context, index) =>
-                  SearchPastryCard(pastry: pastries[index]),
             ),
-          ),
+          ] else ...[
+            const SearchPastriesEmpty(),
+          ]
         ],
+      ),
+    );
+  }
+}
+
+class SearchPastriesEmpty extends StatelessWidget {
+  const SearchPastriesEmpty({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: Text(
+          'No pastry found :(',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
       ),
     );
   }
@@ -165,9 +270,11 @@ class SearchPastryCard extends StatelessWidget {
 }
 
 class SearchCategoriesContent extends StatelessWidget {
-  final List<String> categories;
+  final List<PastryCategory> categories;
+  final Function(PastryCategory) onSelectedCategory;
 
-  const SearchCategoriesContent({super.key, required this.categories});
+  const SearchCategoriesContent(
+      {super.key, required this.categories, required this.onSelectedCategory});
 
   @override
   Widget build(BuildContext context) {
@@ -182,18 +289,22 @@ class SearchCategoriesContent extends StatelessWidget {
           height: 16.0,
         ),
         GridView.builder(
-          shrinkWrap: true,
-          itemCount: categories.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.35 / 1,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-          ),
-          itemBuilder: (context, index) => SearchCategoryCard(
-            category: categories[index],
-          ),
-        ),
+            shrinkWrap: true,
+            itemCount: categories.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.35 / 1,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+            ),
+            itemBuilder: (context, index) => InkWell(
+                  onTap: () {
+                    onSelectedCategory(categories[index]);
+                  },
+                  child: SearchCategoryCard(
+                    category: categories[index].name,
+                  ),
+                )),
         const SizedBox(
           height: 16.0,
         ),
@@ -202,7 +313,6 @@ class SearchCategoriesContent extends StatelessWidget {
   }
 }
 
-// TODO: Clickable to SearchPastriesContent with clicked category for filter
 class SearchCategoryCard extends StatelessWidget {
   const SearchCategoryCard({super.key, required this.category});
 
