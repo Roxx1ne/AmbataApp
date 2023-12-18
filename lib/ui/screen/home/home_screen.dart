@@ -1,9 +1,8 @@
+import 'package:ambataapp/data/model/pastry.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../account/account_screen.dart';
-import '../search/search_screen.dart';
-import '../signin/signin_screen.dart';
+import '../../../data/repository/pastry_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,91 +12,209 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
+  late List<Pastry> _pastries;
 
-  // Add pages here
-  final List<Widget> _pages = [
-    HomeContent(),
-    SearchScreen(),
-    AccountScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
 
-  final List<String> _titles = [
-    'Freshly Baked',
-    'Search Screen',
-    'Account Screen'
-  ];
+    _pastries = context.read<DefaultPastryRepository>().getPastries();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _titles[_currentIndex],
-          style: GoogleFonts.poppins(),
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppBar(
+          title: Text(
+            'Freshly Baked',
+            style: textTheme.titleLarge,
+          ),
+          backgroundColor: colorScheme.surface,
+          actions: [
+            Icon(
+              Icons.notifications_outlined,
+              color: colorScheme.onSurface,
+            ),
+            const SizedBox(
+              width: 22.0,
+            ),
+            Icon(
+              Icons.shopping_cart_outlined,
+              color: colorScheme.onSurface,
+            ),
+            const SizedBox(
+              width: 22.0,
+            ),
+            Icon(
+              Icons.settings_outlined,
+              color: colorScheme.onSurface,
+            ),
+          ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Tambahkan logika untuk menangani aksi ketika ikon cart diklik
-            },
+        const SizedBox(
+          height: 8.0,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Special Picks',
+            style: textTheme.headlineSmall,
           ),
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              // Tambahkan logika untuk menangani aksi ketika ikon cart diklik
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SignInScreen(),
+        ),
+        const SizedBox(
+          height: 16.0,
+        ),
+        Flexible(
+            child: Container(
+          height: 221,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            children: [
+              for (var pastry in _pastries.sublist(0, 5)) ...[
+                HomePastryCard(
+                  pastry: pastry,
                 ),
-              );
-            },
+              ],
+            ],
           ),
-        ],
-        automaticallyImplyLeading: false,
+        )),
+        const SizedBox(
+          height: 8.0,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Popular',
+            style: textTheme.headlineSmall,
+          ),
+        ),
+        const SizedBox(
+          height: 16.0,
+        ),
+        Flexible(
+            child: SizedBox(
+          height: 221,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            children: [
+              for (var pastry in _pastries.sublist(10, 15)) ...[
+                HomePastryCardVariant(
+                  pastry: pastry,
+                ),
+              ],
+            ],
+          ),
+        )),
+      ],
+    );
+  }
+}
+
+class HomePastryCard extends StatelessWidget {
+  final Pastry pastry;
+
+  const HomePastryCard({super.key, required this.pastry});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
       ),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colorScheme.primary,
+              colorScheme.secondary,
+              colorScheme.surface,
+              colorScheme.surface,
+            ],
+            stops: [0.0, 0.5, 0.5, 1.0],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Account',
-          ),
-        ],
+        ),
+        child: SizedBox(
+            height: 160,
+            width: 176,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  HomePastryCircleImage(),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  Text(
+                    pastry.name,
+                    style: textTheme.titleMedium,
+                  ),
+                ],
+              ),
+            )),
       ),
     );
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomePastryCardVariant extends StatelessWidget {
+  final Pastry pastry;
+
+  const HomePastryCardVariant({super.key, required this.pastry});
+
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Selamat datang di Home Screen!',
-        style: TextStyle(fontSize: 20),
-      ),
+    final textTheme = Theme.of(context).textTheme;
+    return SizedBox(
+        height: 160,
+        width: 176,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 16.0,
+              ),
+              HomePastryCircleImage(),
+              SizedBox(
+                height: 8.0,
+              ),
+              Text(
+                pastry.name,
+                style: textTheme.titleMedium,
+              ),
+            ],
+          ),
+        ));
+  }
+}
+
+class HomePastryCircleImage extends StatelessWidget {
+  const HomePastryCircleImage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return CircleAvatar(
+      backgroundColor: colorScheme.onSecondaryContainer,
+      radius: 72,
     );
   }
 }
