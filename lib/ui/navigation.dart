@@ -58,17 +58,7 @@ final router = GoRouter(
           name: TopLevelDestinations.home.name,
           path: TopLevelDestinations.home.path,
           builder: (context, state) => Center(
-            child: Column(
-              children: [
-                const Text('Home'),
-                ElevatedButton(
-                  onPressed: () {
-                    context.goNamed('detail', pathParameters: {'id': '1'});
-                  },
-                  child: const Text('Detail'),
-                ),
-              ],
-            ),
+            child: HomeScreen()
           ),
           routes: [
             GoRoute(
