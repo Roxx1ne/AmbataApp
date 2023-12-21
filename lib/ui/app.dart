@@ -1,6 +1,7 @@
 import 'package:ambataapp/data/repository/authentication/default_authentication_repository.dart';
 import 'package:ambataapp/data/repository/cart/cart_repository.dart';
 import 'package:ambataapp/data/repository/pastry_repository.dart';
+import 'package:ambataapp/ui/screen/account/account_screen.dart';
 import 'package:ambataapp/ui/screen/home/home_screen.dart';
 import 'package:ambataapp/ui/screen/search/search_screen.dart';
 import 'package:ambataapp/ui/screen/splash/splash_screen.dart';
