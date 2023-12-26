@@ -57,18 +57,16 @@ final router = GoRouter(
         GoRoute(
           name: TopLevelDestinations.home.name,
           path: TopLevelDestinations.home.path,
-          builder: (context, state) => Center(
-            child: HomeScreen()
-          ),
+          builder: (context, state) => const HomeScreen(),
           routes: [
             GoRoute(
               name: 'detail',
               path: 'detail/:id',
               builder: (context, state) {
-                final id = state.pathParameters['id'] ?? '0';
+                final String id = state.pathParameters['id'] ?? '0';
 
-                return Center(
-                  child: Text(id),
+                return DetailScreen(
+                  id: int.parse(id),
                 );
               },
               parentNavigatorKey: _rootNavigatorKey,
@@ -79,7 +77,7 @@ final router = GoRouter(
         GoRoute(
           name: TopLevelDestinations.search.name,
           path: TopLevelDestinations.search.path,
-          builder: (context, state) => SearchScreen(),
+          builder: (context, state) => const SearchScreen(),
           parentNavigatorKey: _shellNavigatorKey,
         ),
         GoRoute(

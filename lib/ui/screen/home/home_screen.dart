@@ -1,8 +1,8 @@
 import 'package:ambataapp/data/model/pastry.dart';
+import 'package:ambataapp/ui/screen/home/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../data/repository/pastry_repository.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,107 +12,119 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List<Pastry> _pastries;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _pastries = context.read<DefaultPastryRepository>().getPastries();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppBar(
-          title: Text(
-            'Freshly Baked',
-            style: textTheme.titleLarge,
-          ),
-          backgroundColor: colorScheme.surface,
-          actions: [
-            Icon(
-              Icons.notifications_outlined,
-              color: colorScheme.onSurface,
+    final state = context.watch<HomeCubit>().state;
+    return _homeContent(state);
+  }
+
+  Widget _homeContent(HomeUiState uiState) {
+    switch (uiState) {
+      case Loading():
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      case Success():
+        final colorScheme = Theme.of(context).colorScheme;
+        final textTheme = Theme.of(context).textTheme;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppBar(
+              title: Text(
+                'Freshly Baked',
+                style: textTheme.titleLarge,
+              ),
+              backgroundColor: colorScheme.surface,
+              actions: [
+                Icon(
+                  Icons.notifications_outlined,
+                  color: colorScheme.onSurface,
+                ),
+                const SizedBox(
+                  width: 22.0,
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.shopping_cart_outlined,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(
+                  width: 22.0,
+                ),
+                Icon(
+                  Icons.settings_outlined,
+                  color: colorScheme.onSurface,
+                ),
+              ],
             ),
             const SizedBox(
-              width: 22.0,
+              height: 8.0,
             ),
-            Icon(
-              Icons.shopping_cart_outlined,
-              color: colorScheme.onSurface,
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Text(
+                'Special Picks',
+                style: textTheme.headlineSmall,
+              ),
             ),
             const SizedBox(
-              width: 22.0,
+              height: 16.0,
             ),
-            Icon(
-              Icons.settings_outlined,
-              color: colorScheme.onSurface,
+            Flexible(
+              child: SizedBox(
+                height: 221,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  children: [
+                    for (var pastry in uiState.data.sublist(0, 2)) ...[
+                      HomePastryCard(
+                        pastry: pastry,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Text(
+                'Popular',
+                style: textTheme.headlineSmall,
+              ),
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            Flexible(
+              child: SizedBox(
+                height: 221,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  children: [
+                    for (var pastry in uiState.data.sublist(2, 4)) ...[
+                      HomePastryCardVariant(
+                        pastry: pastry,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
           ],
-        ),
-        const SizedBox(
-          height: 8.0,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Special Picks',
-            style: textTheme.headlineSmall,
-          ),
-        ),
-        const SizedBox(
-          height: 16.0,
-        ),
-        Flexible(
-            child: Container(
-          height: 221,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            children: [
-              for (var pastry in _pastries.sublist(0, 5)) ...[
-                HomePastryCard(
-                  pastry: pastry,
-                ),
-              ],
-            ],
-          ),
-        )),
-        const SizedBox(
-          height: 8.0,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Popular',
-            style: textTheme.headlineSmall,
-          ),
-        ),
-        const SizedBox(
-          height: 16.0,
-        ),
-        Flexible(
-            child: SizedBox(
-          height: 221,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            children: [
-              for (var pastry in _pastries.sublist(10, 15)) ...[
-                HomePastryCardVariant(
-                  pastry: pastry,
-                ),
-              ],
-            ],
-          ),
-        )),
-      ],
-    );
+        );
+      case Error():
+        return Center(
+          child: Text(uiState.message),
+        );
+    }
   }
 }
 
@@ -125,48 +137,53 @@ class HomePastryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              colorScheme.primary,
-              colorScheme.secondary,
-              colorScheme.surface,
-              colorScheme.surface,
-            ],
-            stops: [0.0, 0.5, 0.5, 1.0],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+    return InkWell(
+      onTap: () {
+        context.goNamed("detail", pathParameters: {'id': '${pastry.id}'});
+      },
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
         ),
-        child: SizedBox(
-            height: 160,
-            width: 176,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  HomePastryCircleImage(),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  Text(
-                    pastry.name,
-                    style: textTheme.titleMedium,
-                  ),
-                ],
-              ),
-            )),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                colorScheme.primary,
+                colorScheme.secondary,
+                colorScheme.surface,
+                colorScheme.surface,
+              ],
+              stops: const [0.0, 0.5, 0.5, 1.0],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: SizedBox(
+              height: 160,
+              width: 176,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+                    const HomePastryCircleImage(),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      pastry.name,
+                      style: textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              )),
+        ),
       ),
     );
   }
@@ -184,16 +201,16 @@ class HomePastryCardVariant extends StatelessWidget {
         height: 160,
         width: 176,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 16.0,
               ),
-              HomePastryCircleImage(),
-              SizedBox(
+              const HomePastryCircleImage(),
+              const SizedBox(
                 height: 8.0,
               ),
               Text(
