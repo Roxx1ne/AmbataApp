@@ -2,6 +2,7 @@ import 'package:ambataapp/ui/screen/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../common/currency_formatter.dart';
 import '../../../data/model/pastry.dart';
 import '../../component/root.dart';
 
@@ -212,18 +213,11 @@ class SearchPastryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // Image(
-            //   image:,
-            //   width: 189.5,
-            //   height: 189.5,
-            //   fit: BoxFit.cover,
-            // ),
-            SizedBox(
+            Image(
+              image:NetworkImage(pastry.imageUrl),
               width: 189.5,
               height: 189.5,
-              child: Container(
-                color: colorScheme.onSecondaryContainer,
-              ),
+              fit: BoxFit.cover,
             ),
             const SizedBox(
               height: 2.0,
@@ -242,7 +236,7 @@ class SearchPastryCard extends StatelessWidget {
                     height: 4.0,
                   ),
                   Text(
-                    '${pastry.price}',
+                    CurrencyFormatter.convertToIdr(pastry.price, 2),
                     style: textTheme.bodySmall,
                   ),
                 ],

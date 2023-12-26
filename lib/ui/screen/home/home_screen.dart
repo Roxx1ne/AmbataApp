@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   children: [
-                    for (var pastry in uiState.data.sublist(0, 2)) ...[
+                    for (var pastry in uiState.data.sublist(0, 5)) ...[
                       HomePastryCard(
                         pastry: pastry,
                       ),
@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   children: [
-                    for (var pastry in uiState.data.sublist(2, 4)) ...[
+                    for (var pastry in uiState.data.sublist(13, 20)) ...[
                       HomePastryCardVariant(
                         pastry: pastry,
                       ),
@@ -172,7 +172,9 @@ class HomePastryCard extends StatelessWidget {
                     const SizedBox(
                       height: 16.0,
                     ),
-                    const HomePastryCircleImage(),
+                    HomePastryCircleImage(
+                      imageUrl: pastry.imageUrl,
+                    ),
                     const SizedBox(
                       height: 8.0,
                     ),
@@ -197,7 +199,11 @@ class HomePastryCardVariant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return SizedBox(
+    return InkWell(
+      onTap: () {
+        context.goNamed("detail", pathParameters: {'id': '${pastry.id}'});
+      },
+      child: SizedBox(
         height: 160,
         width: 176,
         child: Padding(
@@ -209,7 +215,7 @@ class HomePastryCardVariant extends StatelessWidget {
               const SizedBox(
                 height: 16.0,
               ),
-              const HomePastryCircleImage(),
+              HomePastryCircleImage(imageUrl: pastry.imageUrl),
               const SizedBox(
                 height: 8.0,
               ),
@@ -219,18 +225,23 @@ class HomePastryCardVariant extends StatelessWidget {
               ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
 class HomePastryCircleImage extends StatelessWidget {
-  const HomePastryCircleImage({super.key});
+  const HomePastryCircleImage({super.key, required this.imageUrl});
+
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return CircleAvatar(
       backgroundColor: colorScheme.onSecondaryContainer,
+      backgroundImage: NetworkImage(imageUrl),
       radius: 72,
     );
   }
