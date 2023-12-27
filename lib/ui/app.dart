@@ -1,8 +1,8 @@
 import 'package:ambataapp/data/repository/authentication/default_authentication_repository.dart';
-import 'package:ambataapp/data/repository/cart/cart_repository.dart';
-import 'package:ambataapp/data/repository/pastry_repository.dart';
 import 'package:ambataapp/ui/screen/account/account_screen.dart';
 import 'package:ambataapp/ui/screen/home/home_screen.dart';
+import 'package:ambataapp/ui/screen/search/cubit/search_cubit.dart';
+import 'package:ambataapp/ui/screen/search/filter.dart';
 import 'package:ambataapp/ui/screen/search/search_screen.dart';
 import 'package:ambataapp/ui/screen/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,9 @@ import 'package:go_router/go_router.dart';
 import '../authentication/authentication.dart';
 import '../data/model/authentication_status.dart';
 import '../data/repository/authentication/authentication_repository.dart';
+import '../data/repository/cart/cart_repository.dart';
+import '../data/repository/cart/default_cart_repository.dart';
+import '../data/repository/pastry/default_pastry_repository.dart';
 import '../data/repository/user_repository.dart';
 import 'component/root.dart';
 
@@ -55,8 +58,11 @@ class _AmbataAppState extends State<AmbataApp> {
         RepositoryProvider<UserRepository>(
           create: (_) => _userRepository,
         ),
-        RepositoryProvider<DefaultPastryRepository>(
+        RepositoryProvider<PastryRepository>(
           create: (_) => _pastryRepository,
+        ),
+        RepositoryProvider<CartRepository>(
+          create: (_) => _cartRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -66,7 +72,16 @@ class _AmbataAppState extends State<AmbataApp> {
               authenticationRepository: _authenticationRepository,
               userRepository: _userRepository,
             ),
-          )
+          ),
+          BlocProvider(
+            create: (_) => HomeCubit(_pastryRepository),
+          ),
+          BlocProvider(
+            create: (_) => SearchCubit(_pastryRepository, SearchFilter()),
+          ),
+          BlocProvider(
+            create: (_) => CartCubit(_cartRepository),
+          ),
         ],
         child: const AmbataAppRoot(),
       ),

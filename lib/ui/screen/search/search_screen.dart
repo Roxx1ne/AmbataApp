@@ -1,7 +1,9 @@
-import 'package:ambataapp/data/repository/pastry_repository.dart';
+import 'package:ambataapp/ui/screen/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../common/currency_formatter.dart';
 import '../../../data/model/pastry.dart';
 import '../../component/root.dart';
 
@@ -13,67 +15,20 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  bool _isSearched = false;
-  String _query = '';
-  final Set<PastryCategory> _selectedCategory = {PastryCategory.none};
-
-  late List<Pastry> _pastries;
   late List<PastryCategory> _pastryCategory;
 
   @override
   void initState() {
     super.initState();
 
-    _pastries = context.read<DefaultPastryRepository>().getPastries();
     _pastryCategory = PastryCategory.values
         .where((pastry) => pastry != PastryCategory.none)
         .toList();
   }
 
-  Widget searchContent(bool isSearched) {
-    if (isSearched) {
-      final pastries = _pastries
-          .where((pastry) =>
-              _selectedCategory.every((pastry) => pastry == PastryCategory.none)
-                  ? true
-                  : _selectedCategory.contains(pastry.category))
-          .where((pastry) => _query.isEmpty
-              ? true
-              : pastry.name.toLowerCase().contains(_query))
-          .toList();
-
-      return SearchPastriesContent(
-        pastries: pastries,
-        categories: _pastryCategory,
-        selectedCategories: _selectedCategory,
-        onSelectedFilter: (selected, category) {
-          setState(() {
-            if (selected) {
-              _selectedCategory.add(category);
-            } else {
-              _selectedCategory.remove(category);
-              if (_selectedCategory.isEmpty) {
-                _selectedCategory.add(PastryCategory.none);
-              }
-            }
-          });
-        },
-      );
-    } else {
-      return SearchCategoriesContent(
-        categories: _pastryCategory,
-        onSelectedCategory: (category) {
-          setState(() {
-            _isSearched = true;
-            _selectedCategory.add(category);
-          });
-        },
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<SearchCubit>().state;
     return AmbataScaffold(
       child: Padding(
         padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
@@ -81,21 +36,53 @@ class _SearchScreenState extends State<SearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SearchBar(onSearch: (query) {
-              setState(() {
-                _isSearched = true;
-                _query = query;
-              });
+              context.read<SearchCubit>().setQuery(query);
             }),
             const SizedBox(
               height: 24.0,
             ),
-            searchContent(
-              _isSearched,
+            _searchContent(
+              state,
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _searchContent(SearchUiState uiState) {
+    switch (uiState) {
+      case Loading():
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      case Success():
+        if (uiState.isSearched) {
+          return SearchPastriesContent(
+            pastries: uiState.data,
+            categories: _pastryCategory,
+            selectedCategories: uiState.selectedCategories,
+            onSelectedFilter: (selected, category) {
+              if (selected) {
+                context.read<SearchCubit>().addSelectedCategories(category);
+              } else {
+                context.read<SearchCubit>().removeSelectedCategories(category);
+              }
+            },
+          );
+        } else {
+          return SearchCategoriesContent(
+            categories: _pastryCategory,
+            onSelectedCategory: (category) {
+              context.read<SearchCubit>().addSelectedCategories(category);
+            },
+          );
+        }
+      case Error():
+        return Center(
+          child: Text(uiState.message),
+        );
+    }
   }
 }
 
@@ -105,12 +92,13 @@ class SearchPastriesContent extends StatelessWidget {
   final Set<PastryCategory> selectedCategories;
   final Function(bool, PastryCategory) onSelectedFilter;
 
-  const SearchPastriesContent(
-      {super.key,
-      required this.pastries,
-      required this.selectedCategories,
-      required this.onSelectedFilter,
-      required this.categories});
+  const SearchPastriesContent({
+    super.key,
+    required this.pastries,
+    required this.selectedCategories,
+    required this.onSelectedFilter,
+    required this.categories,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -213,56 +201,54 @@ class SearchPastryCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceVariant,
+    return InkWell(
+      onTap: () {
+        GoRouter.of(context).go("/search/detail/${pastry.id}");
+      },
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // Image(
-            //   image:,
-            //   width: 189.5,
-            //   height: 189.5,
-            //   fit: BoxFit.cover,
-            // ),
-            SizedBox(
-              width: 189.5,
-              height: 189.5,
-              child: Container(
-                color: colorScheme.onSecondaryContainer,
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceVariant,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image(
+                image:NetworkImage(pastry.imageUrl),
+                width: 189.5,
+                height: 189.5,
+                fit: BoxFit.cover,
               ),
-            ),
-            const SizedBox(
-              height: 2.0,
-            ),
-            Container(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    pastry.name,
-                    style: textTheme.titleSmall,
-                  ),
-                  const SizedBox(
-                    height: 4.0,
-                  ),
-                  Text(
-                    '${pastry.price}',
-                    style: textTheme.bodySmall,
-                  ),
-                ],
+              const SizedBox(
+                height: 2.0,
               ),
-            )
-          ],
+              Container(
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      pastry.name,
+                      style: textTheme.titleSmall,
+                    ),
+                    const SizedBox(
+                      height: 4.0,
+                    ),
+                    Text(
+                      CurrencyFormatter.convertToIdr(pastry.price, 2),
+                      style: textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -357,6 +343,7 @@ class SearchCategoryCard extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class SearchBar extends StatefulWidget {
