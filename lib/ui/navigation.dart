@@ -101,8 +101,7 @@ final router = GoRouter(
         GoRoute(
           name: TopLevelDestinations.account.name,
           path: TopLevelDestinations.account.path,
-          builder: (context, state) => const Center(
-            child: Text('Account'),
+          builder: (context, state) => const AccountScreen (
           ),
           parentNavigatorKey: _shellNavigatorKey,
         ),
