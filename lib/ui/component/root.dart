@@ -12,10 +12,8 @@ class AmbataScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = Theme.of(context).colorScheme.background;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: backgroundColor,
         bottomNavigationBar: bottomNavigationBar,
         body: child,
       ),

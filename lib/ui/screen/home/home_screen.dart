@@ -45,7 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 22.0,
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.go("/home/cart");
+                  },
                   icon: Icon(
                     Icons.shopping_cart_outlined,
                     color: colorScheme.onSurface,
@@ -57,6 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icon(
                   Icons.settings_outlined,
                   color: colorScheme.onSurface,
+                ),
+                const SizedBox(
+                  width: 22.0,
                 ),
               ],
             ),
@@ -139,7 +144,7 @@ class HomePastryCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return InkWell(
       onTap: () {
-        context.goNamed("detail", pathParameters: {'id': '${pastry.id}'});
+        context.go("/home/detail/${pastry.id}");
       },
       child: Card(
         clipBehavior: Clip.antiAlias,
@@ -164,7 +169,7 @@ class HomePastryCard extends StatelessWidget {
               height: 160,
               width: 176,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,

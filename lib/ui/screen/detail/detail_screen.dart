@@ -50,7 +50,9 @@ class _DetailScreenState extends State<DetailScreen> {
             backgroundColor: colorScheme.surface,
             actions: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.go("/home/cart");
+                },
                 icon: Icon(
                   Icons.shopping_cart_outlined,
                   color: colorScheme.onSurface,

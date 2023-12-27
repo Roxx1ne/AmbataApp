@@ -1,26 +1,18 @@
 import 'dart:async';
+import 'dart:collection';
 
 import '../../model/pastry.dart';
 
-class DefaultCartRepository {
-  List<Pastry> _pastryInCart = [];
+abstract class CartRepository {
+  Stream<LinkedHashMap<Pastry, int>> get cart;
 
-  final _controller = StreamController<List<Pastry>>();
+  void getAllPastriesInCart();
 
-  Stream<List<Pastry>> get cart async* {
-    yield _pastryInCart;
-    yield* _controller.stream;
-  }
+  Future<void> add(Pastry pastry, int quantity);
 
-  set pastryInCart(List<Pastry> pastries) {
-    _pastryInCart = pastries;
-  }
+  Future<void> updateQuantity(Pastry pastry, int quantity);
 
-  void add(Pastry pastry) {
-    _pastryInCart.add(pastry);
-  }
+  Future<void> removeAll();
 
-  void remove(Pastry pastry) {
-    _pastryInCart.remove(pastry);
-  }
+  Future<Pastry?> getPastryById(int id);
 }

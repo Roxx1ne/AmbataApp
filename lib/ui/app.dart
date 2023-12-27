@@ -1,5 +1,7 @@
 import 'package:ambataapp/data/repository/authentication/default_authentication_repository.dart';
 import 'package:ambataapp/data/repository/pastry/pastry_repository.dart';
+import 'package:ambataapp/ui/screen/cart/cart_screen.dart';
+import 'package:ambataapp/ui/screen/cart/cubit/cart_cubit.dart';
 import 'package:ambataapp/ui/screen/detail/detail_screen.dart';
 import 'package:ambataapp/ui/screen/home/cubit/home_cubit.dart';
 import 'package:ambataapp/ui/screen/home/home_screen.dart';
@@ -80,6 +82,9 @@ class _AmbataAppState extends State<AmbataApp> {
           ),
           BlocProvider(
             create: (_) => SearchCubit(_pastryRepository, SearchFilter()),
+          ),
+          BlocProvider(
+            create: (_) => CartCubit(_cartRepository),
           ),
         ],
         child: const AmbataAppRoot(),

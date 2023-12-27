@@ -1,6 +1,7 @@
 import 'package:ambataapp/ui/screen/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../common/currency_formatter.dart';
 import '../../../data/model/pastry.dart';
@@ -200,49 +201,54 @@ class SearchPastryCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceVariant,
+    return InkWell(
+      onTap: () {
+        GoRouter.of(context).go("/search/detail/${pastry.id}");
+      },
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image(
-              image:NetworkImage(pastry.imageUrl),
-              width: 189.5,
-              height: 189.5,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(
-              height: 2.0,
-            ),
-            Container(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    pastry.name,
-                    style: textTheme.titleSmall,
-                  ),
-                  const SizedBox(
-                    height: 4.0,
-                  ),
-                  Text(
-                    CurrencyFormatter.convertToIdr(pastry.price, 2),
-                    style: textTheme.bodySmall,
-                  ),
-                ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceVariant,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image(
+                image:NetworkImage(pastry.imageUrl),
+                width: 189.5,
+                height: 189.5,
+                fit: BoxFit.cover,
               ),
-            )
-          ],
+              const SizedBox(
+                height: 2.0,
+              ),
+              Container(
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      pastry.name,
+                      style: textTheme.titleSmall,
+                    ),
+                    const SizedBox(
+                      height: 4.0,
+                    ),
+                    Text(
+                      CurrencyFormatter.convertToIdr(pastry.price, 2),
+                      style: textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

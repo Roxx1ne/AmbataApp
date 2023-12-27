@@ -33,12 +33,13 @@ final router = GoRouter(
       ),
       routes: [
         GoRoute(
-            name: 'sign_up',
-            path: 'sign/up',
-            builder: (context, state) => const Center(
-                  child: Text('Sign Up'),
-                ),
-            parentNavigatorKey: _rootNavigatorKey),
+          name: 'sign_up',
+          path: 'sign/up',
+          builder: (context, state) => const Center(
+            child: Text('Sign Up'),
+          ),
+          parentNavigatorKey: _rootNavigatorKey,
+        ),
       ],
       parentNavigatorKey: _rootNavigatorKey,
     ),
@@ -58,9 +59,8 @@ final router = GoRouter(
           name: TopLevelDestinations.home.name,
           path: TopLevelDestinations.home.path,
           builder: (context, state) => const HomeScreen(),
-          routes: [
+          routes:[
             GoRoute(
-              name: 'detail',
               path: 'detail/:id',
               builder: (context, state) {
                 final String id = state.pathParameters['id'] ?? '0';
@@ -69,7 +69,12 @@ final router = GoRouter(
                   id: int.parse(id),
                 );
               },
-              parentNavigatorKey: _rootNavigatorKey,
+              parentNavigatorKey: _shellNavigatorKey,
+            ),
+            GoRoute(
+              path: 'cart',
+              builder: (context, state) => CartScreen(),
+              parentNavigatorKey: _shellNavigatorKey,
             ),
           ],
           parentNavigatorKey: _shellNavigatorKey,
@@ -78,6 +83,19 @@ final router = GoRouter(
           name: TopLevelDestinations.search.name,
           path: TopLevelDestinations.search.path,
           builder: (context, state) => const SearchScreen(),
+          routes: [
+            GoRoute(
+              path: 'detail/:id',
+              builder: (context, state) {
+                final String id = state.pathParameters['id'] ?? '0';
+
+                return DetailScreen(
+                  id: int.parse(id),
+                );
+              },
+              parentNavigatorKey: _shellNavigatorKey,
+            ),
+          ],
           parentNavigatorKey: _shellNavigatorKey,
         ),
         GoRoute(
