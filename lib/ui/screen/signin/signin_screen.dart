@@ -55,47 +55,48 @@ class _SignInScreenState extends State<SignInScreen> {
                 width: 240,
                 height: 240,
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Sign In',
-                      style: textTheme.headlineLarge,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sign In',
+                    style: textTheme.headlineLarge,
+                  ),
+                  const SizedBox(
+                    height: 24.0,
+                  ),
+                  TextField(
+                    onChanged: (value) =>
+                        context.read<SignInCubit>().emailChanged(value),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'Email',
+                      helperText: 'Your account email',
+                      errorText: Validator.isValidEmail(state.email)
+                          ? null
+                          : 'Not valid email',
                     ),
-                    const SizedBox(
-                      height: 24.0,
+                  ),
+                  const SizedBox(
+                    height: 24.0,
+                  ),
+                  TextField(
+                    onChanged: (value) =>
+                        context.read<SignInCubit>().passwordChanged(value),
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'Password',
+                      helperText: 'Your password',
+                      errorText: Validator.isValidPassword(state.password)
+                          ? null
+                          : 'Not valid password',
                     ),
-                    TextField(
-                      onChanged: (value) =>
-                          context.read<SignInCubit>().emailChanged(value),
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: 'Email',
-                        helperText: 'Your account email',
-                        errorText: Validator.isValidEmail(state.email)
-                            ? null
-                            : 'Not valid email',
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 24.0,
-                    ),
-                    TextField(
-                      onChanged: (value) =>
-                          context.read<SignInCubit>().passwordChanged(value),
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: 'Password',
-                        helperText: 'Your password',
-                        errorText: Validator.isValidPassword(state.password)
-                            ? null
-                            : 'Not valid password',
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 48.0,
               ),
               FilledButton(
                 onPressed: () {
