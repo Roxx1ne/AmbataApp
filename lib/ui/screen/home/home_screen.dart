@@ -65,13 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   width: 22.0,
                 ),
-                Icon(
-                  Icons.settings_outlined,
-                  color: colorScheme.onSurface,
-                ),
-                const SizedBox(
-                  width: 22.0,
-                ),
+               
               ],
             ),
             const SizedBox(

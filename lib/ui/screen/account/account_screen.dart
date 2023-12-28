@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,12 +13,26 @@ class AccountScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Account',
-          style: TextStyle(fontSize: 22),
+        title: Row(
+          children: [
+            const Text(
+              'Account',
+              style: TextStyle(fontSize: 22),
+            ),
+            Spacer(), // This spacer will push the logout icon to the right
+          ],
         ),
         automaticallyImplyLeading: false,
         backgroundColor: colorScheme.surface,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              // Perform immediate exit when logout icon is clicked
+              exit(0);
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: <Widget>[
