@@ -6,13 +6,18 @@ class NotifPage extends StatefulWidget {
   _NotifPageState createState() => _NotifPageState();
 }
 
-class _NotifPageState extends State<NotifPage> {
-  GlobalKey<_RecentOrderWidgetState> _recentOrderWidgetKey =
-      GlobalKey<_RecentOrderWidgetState>();
+class _NotifPageState extends State<NotifPage>
+    with AutomaticKeepAliveClientMixin {
+  GlobalKey<_RecentOrderWidgetState>? _recentOrderWidgetKey;
   bool markAllAsReadClicked = false;
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final colorScheme = Theme.of(context).colorScheme;
 
     return MaterialApp(
@@ -28,6 +33,7 @@ class _NotifPageState extends State<NotifPage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
+              resetRecentOrderBackground(); 
               Navigator.pop(context);
             },
           ),
@@ -43,6 +49,8 @@ class _NotifPageState extends State<NotifPage> {
 
   Widget _buildPositionedTransactionBox(
       BuildContext context, ColorScheme colorScheme) {
+    _recentOrderWidgetKey ??= GlobalKey<_RecentOrderWidgetState>();
+
     return Stack(
       children: [
         Positioned(
@@ -57,7 +65,7 @@ class _NotifPageState extends State<NotifPage> {
             key: _recentOrderWidgetKey,
             colorScheme: colorScheme,
             markAllAsReadClicked: markAllAsReadClicked,
-            onMarkAllAsRead: _handleMarkAllAsRead, // Pass the callback function
+            onMarkAllAsRead: _handleMarkAllAsRead,
           ),
         ),
       ],
@@ -70,7 +78,7 @@ class _NotifPageState extends State<NotifPage> {
       width: 130,
       height: 45,
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: markAllAsReadClicked ? Colors.transparent : colorScheme.surface,
         borderRadius: BorderRadius.circular(8.0),
         boxShadow: [
           BoxShadow(
@@ -84,7 +92,6 @@ class _NotifPageState extends State<NotifPage> {
       child: Center(
         child: GestureDetector(
           onTap: () {
-            // Handle the "Mark All As Read" button click
             _handleMarkAllAsRead();
           },
           child: Text(
@@ -100,23 +107,28 @@ class _NotifPageState extends State<NotifPage> {
     );
   }
 
-  // Function to handle "Mark All As Read" button click
   void _handleMarkAllAsRead() {
-    // Notify the RecentOrderWidget to reset its background color
-    _recentOrderWidgetKey.currentState?.resetBackground();
+    setState(() {
+      markAllAsReadClicked = true;
+      _recentOrderWidgetKey = GlobalKey<_RecentOrderWidgetState>();
+    });
+  }
+
+  void resetRecentOrderBackground() {
+    _recentOrderWidgetKey?.currentState?.resetBackground();
   }
 }
 
 class _RecentOrderWidget extends StatefulWidget {
   final ColorScheme colorScheme;
   final bool markAllAsReadClicked;
-  final Function onMarkAllAsRead; // Callback function
+  final Function onMarkAllAsRead;
 
   const _RecentOrderWidget({
     Key? key,
     required this.colorScheme,
     required this.markAllAsReadClicked,
-    required this.onMarkAllAsRead, // Receive the callback function
+    required this.onMarkAllAsRead,
   }) : super(key: key);
 
   @override
@@ -126,8 +138,6 @@ class _RecentOrderWidget extends StatefulWidget {
 class _RecentOrderWidgetState extends State<_RecentOrderWidget> {
   bool isRecentOrderClicked = false;
   bool isPromoClicked = false;
-  bool primaryContainerApplied = true; // Set to true initially
-  bool primaryContainerAppliedPromo = true; // Set to true initially
 
   @override
   Widget build(BuildContext context) {
@@ -143,10 +153,9 @@ class _RecentOrderWidgetState extends State<_RecentOrderWidget> {
   Widget _buildSingleIcon(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (!primaryContainerApplied && !widget.markAllAsReadClicked) {
+        if (!isRecentOrderClicked && !widget.markAllAsReadClicked) {
           setState(() {
             isRecentOrderClicked = true;
-            primaryContainerApplied = true;
           });
         }
       },
@@ -161,9 +170,9 @@ class _RecentOrderWidgetState extends State<_RecentOrderWidget> {
           vertical: 8.0,
         ),
         decoration: BoxDecoration(
-          color: primaryContainerApplied
-              ? widget.colorScheme.primaryContainer
-              : Colors.transparent,
+          color: isRecentOrderClicked || widget.markAllAsReadClicked
+              ? Colors.transparent
+              : widget.colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Row(
@@ -245,10 +254,9 @@ class _RecentOrderWidgetState extends State<_RecentOrderWidget> {
   Widget _buildpromo(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (!primaryContainerAppliedPromo && !widget.markAllAsReadClicked) {
+        if (!isPromoClicked && !widget.markAllAsReadClicked) {
           setState(() {
             isPromoClicked = true;
-            primaryContainerAppliedPromo = true;
           });
         }
       },
@@ -263,9 +271,9 @@ class _RecentOrderWidgetState extends State<_RecentOrderWidget> {
           vertical: 8.0,
         ),
         decoration: BoxDecoration(
-          color: primaryContainerAppliedPromo
-              ? widget.colorScheme.primaryContainer
-              : Colors.transparent,
+          color: isPromoClicked || widget.markAllAsReadClicked
+              ? Colors.transparent
+              : widget.colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Row(
@@ -345,13 +353,10 @@ class _RecentOrderWidgetState extends State<_RecentOrderWidget> {
     );
   }
 
-  // Function to reset background colors
   void resetBackground() {
     setState(() {
       isRecentOrderClicked = false;
       isPromoClicked = false;
-      primaryContainerApplied = widget.markAllAsReadClicked;
-      primaryContainerAppliedPromo = widget.markAllAsReadClicked;
     });
   }
 }

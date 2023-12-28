@@ -19,7 +19,7 @@ class AccountScreen extends StatelessWidget {
               'Account',
               style: TextStyle(fontSize: 22),
             ),
-            Spacer(), // This spacer will push the logout icon to the right
+            Spacer(), 
           ],
         ),
         automaticallyImplyLeading: false,
@@ -28,7 +28,7 @@ class AccountScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
-              // Perform immediate exit when logout icon is clicked
+              
               exit(0);
             },
           ),
@@ -98,7 +98,7 @@ class AccountScreen extends StatelessWidget {
             left: 10,
             child: InkWell(
               onTap: () {
-                // Navigasi ke halaman "Recent Transaction" ketika diklik
+                
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RecentTransactionPage()),
