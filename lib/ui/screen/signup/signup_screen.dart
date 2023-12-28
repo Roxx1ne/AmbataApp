@@ -1,105 +1,118 @@
+import 'package:ambataapp/authentication/validator.dart';
+import 'package:ambataapp/ui/screen/signup/cubit/signup_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../home/home_screen.dart';
+import '../../component/root.dart';
 
-class SignupScreen extends StatelessWidget {
-  SignupScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  SignUpScreen({super.key});
 
-  final TextEditingController _emailTextController = TextEditingController();
-  final TextEditingController _passwordTextController = TextEditingController();
+  final GlobalKey<ScaffoldMessengerState> snackbarKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Register',
-          style: GoogleFonts.poppins(),
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final state = context.watch<SignUpCubit>().state;
+
+    if (state.errorMessage != null) {
+      final SnackBar snackBar = SnackBar(
+        content: Text(
+          state.errorMessage!,
+          style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSecondary),
         ),
-      ),
-      body: Center(
+        duration: const Duration(seconds: 2),
+      );
+      widget.snackbarKey.currentState?.showSnackBar(snackBar);
+      context.read<SignUpCubit>().errorMessageShowed();
+    }
+
+    return ScaffoldMessenger(
+      key: widget.snackbarKey,
+      child: AmbataScaffold(
+        resizeToAvoidBottomInset: true,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(left: 32.0, top: 16.0, right: 32.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Register',
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                ),
+                'Sign Up',
+                style: textTheme.headlineLarge,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(
+                height: 48.0,
+              ),
               TextField(
-                controller: _emailTextController,
+                onChanged: (value) =>
+                    context.read<SignUpCubit>().emailChanged(value),
                 decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(color: Colors.black54),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  filled: false,
-                  // Tidak menggunakan warna latar belakang
-                  fillColor: Colors.transparent,
+                  helperText: 'Your account email',
+                  errorText: Validator.isValidEmail(state.email)
+                      ? null
+                      : 'Not valid email',
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(
+                height: 24.0,
+              ),
               TextField(
-                controller: _passwordTextController,
+                onChanged: (value) =>
+                    context.read<SignUpCubit>().passwordChanged(value),
+                obscureText: true,
                 decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   labelText: 'Password',
-                  prefixIcon: Icon(Icons.lock),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(color: Colors.black54),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  filled: false,
-                  // Tidak menggunakan warna latar belakang
-                  fillColor: Colors.transparent,
+                  helperText:
+                      'Your password must be at least 8 characters consists of letters and numbers!',
+                  helperMaxLines: 3,
+                  errorText: Validator.isValidPassword(state.password)
+                      ? null
+                      : 'Not valid password',
                 ),
               ),
-              const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Setelah tombol signup diklik, pindah ke HomeScreen
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    onPrimary: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15.0,
-                      horizontal: 40.0,
-                    ),
-                    child: Text(
-                      'Sign Up',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+              const SizedBox(
+                height: 24.0,
+              ),
+              TextField(
+                onChanged: (value) =>
+                    context.read<SignUpCubit>().confirmedPasswordChanged(value),
+                obscureText: true,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Confirm Password',
+                  helperText: 'Confirm your password',
+                  errorText: (state.password == state.confirmedPassword)
+                      ? null
+                      : 'Not valid password',
+                ),
+              ),
+              const SizedBox(
+                height: 48.0,
+              ),
+              FilledButton(
+                onPressed: () {
+                  context.read<SignUpCubit>().signUp();
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.secondary,
+                  minimumSize: const Size(double.infinity, 40),
+                ),
+                child: Text(
+                  'Sign Up',
+                  style: textTheme.labelLarge
+                      ?.copyWith(color: colorScheme.onSecondary),
                 ),
               ),
             ],

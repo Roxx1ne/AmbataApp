@@ -1,17 +1,19 @@
 import 'dart:async';
 
-import '../../model/authentication_status.dart';
+import '../../model/user.dart';
 
 abstract class AuthenticationRepository {
 
-  Stream<AuthenticationStatus> get status;
+  Stream<User> get user;
 
-  Future<void> logIn({
-    required String username,
+  Future<void> signUp({required String email, required String password});
+
+  Future<void> signInWithGoogle();
+
+  Future<void> signInWithEmailAndPassword({
+    required String email,
     required String password,
   });
 
-  void logOut();
-
-  void dispose();
+  void signOut();
 }

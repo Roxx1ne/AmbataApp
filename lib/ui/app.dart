@@ -9,7 +9,9 @@ import 'package:ambataapp/ui/screen/home/home_screen.dart';
 import 'package:ambataapp/ui/screen/search/cubit/search_cubit.dart';
 import 'package:ambataapp/ui/screen/search/filter.dart';
 import 'package:ambataapp/ui/screen/search/search_screen.dart';
+import 'package:ambataapp/ui/screen/signin/cubit/signin_cubit.dart';
 import 'package:ambataapp/ui/screen/signin/signin_screen.dart';
+import 'package:ambataapp/ui/screen/signup/cubit/signup_cubit.dart';
 import 'package:ambataapp/ui/screen/signup/signup_screen.dart';
 import 'package:ambataapp/ui/screen/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +19,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../authentication/authentication.dart';
-import '../data/model/authentication_status.dart';
-import '../data/repository/authentication/authentication_repository.dart';
+ import '../data/repository/authentication/authentication_repository.dart';
 import '../data/repository/cart/cart_repository.dart';
 import '../data/repository/cart/default_cart_repository.dart';
 import '../data/repository/pastry/default_pastry_repository.dart';
-import '../data/repository/user_repository.dart';
 import 'component/root.dart';
 
 part 'navigation.dart';
@@ -36,7 +36,6 @@ class AmbataApp extends StatefulWidget {
 
 class _AmbataAppState extends State<AmbataApp> {
   late final AuthenticationRepository _authenticationRepository;
-  late final UserRepository _userRepository;
   late final DefaultPastryRepository _pastryRepository;
   late final DefaultCartRepository _cartRepository;
 
@@ -44,15 +43,8 @@ class _AmbataAppState extends State<AmbataApp> {
   void initState() {
     super.initState();
     _authenticationRepository = DefaultAuthenticationRepository();
-    _userRepository = UserRepository();
     _pastryRepository = DefaultPastryRepository();
     _cartRepository = DefaultCartRepository();
-  }
-
-  @override
-  void dispose() {
-    _authenticationRepository.dispose();
-    super.dispose();
   }
 
   @override
@@ -61,9 +53,6 @@ class _AmbataAppState extends State<AmbataApp> {
       providers: [
         RepositoryProvider<AuthenticationRepository>(
           create: (_) => _authenticationRepository,
-        ),
-        RepositoryProvider<UserRepository>(
-          create: (_) => _userRepository,
         ),
         RepositoryProvider<PastryRepository>(
           create: (_) => _pastryRepository,
@@ -77,7 +66,6 @@ class _AmbataAppState extends State<AmbataApp> {
           BlocProvider(
             create: (_) => AuthenticationBloc(
               authenticationRepository: _authenticationRepository,
-              userRepository: _userRepository,
             ),
           ),
           BlocProvider(
@@ -116,14 +104,14 @@ class _AmbataAppRootState extends State<AmbataAppRoot> {
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
-            switch (state.status) {
-              case AuthenticationStatus.authenticated:
+            switch (state) {
+              case Authenticated():
                 router.goNamed('home');
                 break;
-              case AuthenticationStatus.unauthenticated:
+              case Unauthenticated():
                 router.goNamed('sign_in');
                 break;
-              case AuthenticationStatus.unknown:
+              case Unknown():
                 router.goNamed('splash');
                 break;
             }

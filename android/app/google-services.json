@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "311150669524",
-    "project_id": "ambatabakery",
-    "storage_bucket": "ambatabakery.appspot.com"
+    "project_number": "674324659963",
+    "project_id": "ambataapp-2a984",
+    "storage_bucket": "ambataapp-2a984.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:311150669524:android:9ef102e2a2a57271cd5541",
+        "mobilesdk_app_id": "1:674324659963:android:f225abd881c7b217bc3a5e",
         "android_client_info": {
-          "package_name": "com.example.ambatabakery"
+          "package_name": "com.example.projek_ambata"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD5EfOPqUSCKQOJbwBPLcpFYg5oukZo-U4"
+          "current_key": "AIzaSyCgWWYvb_hnBi6yl6BCiGhxjMF80L2u1O4"
         }
       ],
       "services": {
