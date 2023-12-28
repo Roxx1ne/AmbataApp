@@ -1,5 +1,10 @@
 import 'package:ambataapp/data/repository/authentication/default_authentication_repository.dart';
+import 'package:ambataapp/data/repository/pastry/pastry_repository.dart';
 import 'package:ambataapp/ui/screen/account/account_screen.dart';
+import 'package:ambataapp/ui/screen/cart/cart_screen.dart';
+import 'package:ambataapp/ui/screen/cart/cubit/cart_cubit.dart';
+import 'package:ambataapp/ui/screen/detail/detail_screen.dart';
+import 'package:ambataapp/ui/screen/home/cubit/home_cubit.dart';
 import 'package:ambataapp/ui/screen/home/home_screen.dart';
 import 'package:ambataapp/ui/screen/search/cubit/search_cubit.dart';
 import 'package:ambataapp/ui/screen/search/filter.dart';

@@ -1,5 +1,6 @@
 import 'package:ambataapp/data/model/pastry.dart';
 import 'package:ambataapp/ui/screen/home/cubit/home_cubit.dart';
+import 'package:ambataapp/ui/screen/home/notifpage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -37,9 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               backgroundColor: colorScheme.surface,
               actions: [
-                Icon(
-                  Icons.notifications_outlined,
-                  color: colorScheme.onSurface,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NotifPage()),
+                    );
+                  },
+                  child: Icon(
+                    Icons.notifications_outlined,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(
                   width: 22.0,
