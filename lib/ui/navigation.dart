@@ -28,15 +28,19 @@ final router = GoRouter(
     GoRoute(
       name: 'sign_in',
       path: '/sign/in',
-      builder: (context, state) => const Center(
-        child: Text('Sign In'),
+      builder: (context, state) => BlocProvider(
+        create: (_) =>
+            SignInCubit(context.read<AuthenticationRepository>()),
+        child: SignInScreen(),
       ),
       routes: [
         GoRoute(
           name: 'sign_up',
           path: 'sign/up',
-          builder: (context, state) => const Center(
-            child: Text('Sign Up'),
+          builder: (context, state) => BlocProvider(
+            create: (_) =>
+                SignUpCubit(context.read<AuthenticationRepository>()),
+            child: SignUpScreen(),
           ),
           parentNavigatorKey: _rootNavigatorKey,
         ),
@@ -59,7 +63,7 @@ final router = GoRouter(
           name: TopLevelDestinations.home.name,
           path: TopLevelDestinations.home.path,
           builder: (context, state) => const HomeScreen(),
-          routes:[
+          routes: [
             GoRoute(
               path: 'detail/:id',
               builder: (context, state) {
@@ -73,7 +77,7 @@ final router = GoRouter(
             ),
             GoRoute(
               path: 'cart',
-              builder: (context, state) => CartScreen(),
+              builder: (context, state) => const CartScreen(),
               parentNavigatorKey: _shellNavigatorKey,
             ),
           ],
@@ -101,8 +105,7 @@ final router = GoRouter(
         GoRoute(
           name: TopLevelDestinations.account.name,
           path: TopLevelDestinations.account.path,
-          builder: (context, state) => const AccountScreen (
-          ),
+          builder: (context, state) => const AccountScreen(),
           parentNavigatorKey: _shellNavigatorKey,
         ),
       ],
