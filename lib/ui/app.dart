@@ -16,6 +16,7 @@ import 'package:ambataapp/ui/screen/signin/signin_screen.dart';
 import 'package:ambataapp/ui/screen/signup/cubit/signup_cubit.dart';
 import 'package:ambataapp/ui/screen/signup/signup_screen.dart';
 import 'package:ambataapp/ui/screen/splash/splash_screen.dart';
+import 'package:ambataapp/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -98,10 +99,7 @@ class _AmbataAppRootState extends State<AmbataAppRoot> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Ambata Bakery',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF914C00)),
-        useMaterial3: true,
-      ),
+      theme: theme,
       routerConfig: router,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
