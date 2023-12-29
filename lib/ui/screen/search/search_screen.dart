@@ -1,3 +1,4 @@
+import 'package:ambataapp/common/string_casing.dart';
 import 'package:ambataapp/ui/screen/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,7 +73,12 @@ class _SearchScreenState extends State<SearchScreen> {
           );
         } else {
           return SearchCategoriesContent(
-            categories: _pastryCategory,
+            categories: {
+              for (var category in _pastryCategory)
+                category: uiState.data
+                    .firstWhere((pastry) => pastry.category == category)
+                    .imageUrl
+            },
             onSelectedCategory: (category) {
               context.read<SearchCubit>().addSelectedCategories(category);
             },
@@ -129,7 +135,7 @@ class SearchPastriesContent extends StatelessWidget {
                     for (var category in categories) ...[
                       FilterChip(
                         label: Text(
-                          category.name,
+                          category.name.capitalized(),
                           style: textTheme.labelLarge,
                         ),
                         backgroundColor: colorScheme.surface,
@@ -219,7 +225,7 @@ class SearchPastryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Image(
-                image:NetworkImage(pastry.imageUrl),
+                image: NetworkImage(pastry.imageUrl),
                 width: 189.5,
                 height: 189.5,
                 fit: BoxFit.cover,
@@ -256,16 +262,21 @@ class SearchPastryCard extends StatelessWidget {
 }
 
 class SearchCategoriesContent extends StatelessWidget {
-  final List<PastryCategory> categories;
+  final Map<PastryCategory, String> categories;
   final Function(PastryCategory) onSelectedCategory;
 
-  const SearchCategoriesContent(
-      {super.key, required this.categories, required this.onSelectedCategory});
+  const SearchCategoriesContent({
+    super.key,
+    required this.categories,
+    required this.onSelectedCategory,
+  });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Categories',
@@ -285,10 +296,11 @@ class SearchCategoriesContent extends StatelessWidget {
             ),
             itemBuilder: (context, index) => InkWell(
                   onTap: () {
-                    onSelectedCategory(categories[index]);
+                    onSelectedCategory(categories.keys.elementAt(index));
                   },
                   child: SearchCategoryCard(
-                    category: categories[index].name,
+                    category: categories.keys.elementAt(index).name,
+                    imageUrl: categories.values.elementAt(index),
                   ),
                 )),
         const SizedBox(
@@ -300,9 +312,14 @@ class SearchCategoriesContent extends StatelessWidget {
 }
 
 class SearchCategoryCard extends StatelessWidget {
-  const SearchCategoryCard({super.key, required this.category});
+  const SearchCategoryCard({
+    super.key,
+    required this.category,
+    required this.imageUrl,
+  });
 
   final String category;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +343,7 @@ class SearchCategoryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              category,
+              category.capitalized(),
               style: textTheme.titleMedium!.copyWith(
                 color: Theme.of(context).colorScheme.onSecondary,
               ),
@@ -335,15 +352,14 @@ class SearchCategoryCard extends StatelessWidget {
               width: 24,
             ),
             CircleAvatar(
-              backgroundColor: colorScheme.onSecondaryContainer,
               radius: 72,
+              foregroundImage: NetworkImage(imageUrl),
             ),
           ],
         ),
       ),
     );
   }
-
 }
 
 class SearchBar extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:ambataapp/data/model/pastry.dart';
 import 'package:ambataapp/ui/screen/home/cubit/home_cubit.dart';
-import 'package:ambataapp/ui/screen/home/notifpage.dart';
+import 'package:ambataapp/ui/screen/notification/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -40,10 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
               actions: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NotifPage()),
-                    );
+                    context.go("/home/notification");
                   },
                   child: Icon(
                     Icons.notifications_outlined,
@@ -65,7 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   width: 22.0,
                 ),
-               
               ],
             ),
             const SizedBox(
@@ -169,30 +165,31 @@ class HomePastryCard extends StatelessWidget {
             ),
           ),
           child: SizedBox(
-              height: 160,
-              width: 176,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 16.0,
-                    ),
-                    HomePastryCircleImage(
-                      imageUrl: pastry.imageUrl,
-                    ),
-                    const SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      pastry.name,
-                      style: textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              )),
+            height: 160,
+            width: 176,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 16.0,
+                  ),
+                  HomePastryCircleImage(
+                    imageUrl: pastry.imageUrl,
+                  ),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  Text(
+                    pastry.name,
+                    style: textTheme.titleMedium,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -209,7 +206,7 @@ class HomePastryCardVariant extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return InkWell(
       onTap: () {
-        context.goNamed("detail", pathParameters: {'id': '${pastry.id}'});
+        context.go("/home/detail/${pastry.id}");
       },
       child: SizedBox(
         height: 160,

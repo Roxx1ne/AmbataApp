@@ -29,8 +29,7 @@ final router = GoRouter(
       name: 'sign_in',
       path: '/sign/in',
       builder: (context, state) => BlocProvider(
-        create: (_) =>
-            SignInCubit(context.read<AuthenticationRepository>()),
+        create: (_) => SignInCubit(context.read<AuthenticationRepository>()),
         child: SignInScreen(),
       ),
       routes: [
@@ -62,22 +61,67 @@ final router = GoRouter(
         GoRoute(
           name: TopLevelDestinations.home.name,
           path: TopLevelDestinations.home.path,
-          builder: (context, state) => const HomeScreen(),
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(
+              child: HomeScreen(),
+            );
+          },
           routes: [
             GoRoute(
               path: 'detail/:id',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final String id = state.pathParameters['id'] ?? '0';
-
-                return DetailScreen(
-                  id: int.parse(id),
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: DetailScreen(
+                    id: int.parse(id),
+                  ),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
                 );
               },
               parentNavigatorKey: _shellNavigatorKey,
             ),
             GoRoute(
               path: 'cart',
-              builder: (context, state) => const CartScreen(),
+              pageBuilder: (context, state) {
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const CartScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
+                );
+              },
+              parentNavigatorKey: _shellNavigatorKey,
+            ),
+            GoRoute(
+              path: 'notification',
+              pageBuilder: (context, state) {
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const NotificationScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
+                );
+              },
               parentNavigatorKey: _shellNavigatorKey,
             ),
           ],
@@ -86,15 +130,29 @@ final router = GoRouter(
         GoRoute(
           name: TopLevelDestinations.search.name,
           path: TopLevelDestinations.search.path,
-          builder: (context, state) => const SearchScreen(),
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(
+              child: SearchScreen(),
+            );
+          },
           routes: [
             GoRoute(
               path: 'detail/:id',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final String id = state.pathParameters['id'] ?? '0';
-
-                return DetailScreen(
-                  id: int.parse(id),
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: DetailScreen(
+                    id: int.parse(id),
+                  ),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
                 );
               },
               parentNavigatorKey: _shellNavigatorKey,
@@ -105,7 +163,31 @@ final router = GoRouter(
         GoRoute(
           name: TopLevelDestinations.account.name,
           path: TopLevelDestinations.account.path,
-          builder: (context, state) => const AccountScreen(),
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(
+              child: AccountScreen(),
+            );
+          },
+          routes: [
+            GoRoute(
+              path: 'transaction',
+              pageBuilder: (context, state) {
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: RecentTransactionPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
+                );
+              },
+              parentNavigatorKey: _shellNavigatorKey,
+            ),
+          ],
           parentNavigatorKey: _shellNavigatorKey,
         ),
       ],
