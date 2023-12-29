@@ -48,17 +48,6 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ),
             backgroundColor: colorScheme.surface,
-            actions: [
-              IconButton(
-                onPressed: () {
-                  context.go("/home/cart");
-                },
-                icon: Icon(
-                  Icons.shopping_cart_outlined,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-            ],
           ),
           Expanded(
             child: FutureBuilder<Pastry?>(
@@ -219,12 +208,15 @@ class _AddToCartState extends State<AddToCart> {
               ),
             ),
             Flexible(
-              flex: 3,
+              flex: 5,
               fit: FlexFit.tight,
               child: FilledButton(
                 onPressed: () {
                   widget.onAddToCart(quantity);
                 },
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.secondary,
+                ),
                 child: Text(
                   'Add to Cart',
                   style: textTheme.labelLarge

@@ -1,126 +1,120 @@
-import 'dart:io';
-
-import 'package:ambataapp/data/repository/authentication/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 
-import 'recent_transaction.dart';
+import '../../../data/model/user.dart';
+import '../../../data/repository/authentication/authentication_repository.dart';
 
 class AccountScreen extends StatelessWidget {
-  const AccountScreen({Key? key});
+  const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            const Text(
-              'Account',
-              style: TextStyle(fontSize: 22),
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        AppBar(
+          title: Text('Account', style: textTheme.titleLarge),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                context.read<AuthenticationRepository>().signOut();
+              },
             ),
-            Spacer(), 
           ],
         ),
-        automaticallyImplyLeading: false,
-        backgroundColor: colorScheme.surface,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthenticationRepository>().signOut();
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: FutureBuilder<User>(
+                future: context.read<AuthenticationRepository>().currentUser,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final user = snapshot.data!;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: colorScheme.primaryContainer,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Icon(
+                                  Icons.account_circle_rounded,
+                                  color: colorScheme.onSurface,
+                                  size: 50,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 16.0,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    user.name ?? 'Username',
+                                    style: textTheme.bodyMedium,
+                                  ),
+                                  Text(
+                                    user.email ?? 'Email',
+                                    style: textTheme.labelSmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 16.0,
+                            ),
+                            const Icon(
+                              Icons.link,
+                            ),
+                          ],
+                        )
+                      ],
+                    );
+                  } else {
+                    return const Center(
+                      child: Text('An error occured'),
+                    );
+                  }
+                },
+              )),
+        ),
+        const Divider(),
+        SizedBox(
+          height: 40.0,
+          width: double.infinity,
+          child: InkWell(
+            onTap: () {
+              GoRouter.of(context).go("/account/transaction");
             },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            bottom: 480,
-            left: 10,
-            right: 10,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.primaryContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Icon(
-                          Icons.account_circle,
-                          color: colorScheme.onSurface,
-                          size: 50,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'John Doe',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            'Member',
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    Container(
-                      margin: EdgeInsets.only(left: 10, right: 10),
-                      child: Icon(Icons.link, size: 24),
-                    ),
-                  ],
-                ),
-                Divider(
-                  thickness: 2,
-                  color: Colors.grey,
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 430,
-            left: 10,
-            child: InkWell(
-              onTap: () {
-                
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RecentTransactionPage()),
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                children: <Widget>[
-                  Icon(Icons.receipt_long, size: 30),
-                  SizedBox(width: 10),
+                children: [
+                  const Icon(Icons.receipt_long),
+                  const SizedBox(width: 16.0),
                   Text(
                     'Recent Transaction',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                    ),
+                    style: textTheme.labelLarge,
                   ),
                 ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -6,6 +6,8 @@ abstract class AuthenticationRepository {
 
   Stream<User> get user;
 
+  Future<User> get currentUser;
+
   Future<void> signUp({required String email, required String password});
 
   Future<void> signInWithGoogle();

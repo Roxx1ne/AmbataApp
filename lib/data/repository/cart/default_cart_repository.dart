@@ -26,7 +26,7 @@ class DefaultCartRepository extends CartRepository {
 
   @override
   Future<void> updateQuantity(Pastry pastry, int quantity) async {
-    if (quantity > 1) {
+    if (quantity >= 1) {
       _pastryInCart.update(pastry, (value) => quantity);
     } else {
       _pastryInCart.remove(pastry);

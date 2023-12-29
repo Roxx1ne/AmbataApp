@@ -78,8 +78,8 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
               Checkout(
-                  totalPrice:
-                      uiState.data.keys.map((pastry) => pastry.price).sum)
+                totalPrice: uiState.data.entries.map((entry) => entry.key.price * entry.value).sum,
+              )
             ],
           ),
         );
@@ -143,7 +143,11 @@ class CartPastryItem extends StatelessWidget {
               children: [
                 PastryQuantityChange(
                   initialQuantity: quantity,
-                  onQuantityChanged: (quantity) {},
+                  onQuantityChanged: (quantity) {
+                    context
+                        .read<CartRepository>()
+                        .updateQuantity(pastry, quantity);
+                  },
                 ),
               ],
             )
@@ -155,10 +159,11 @@ class CartPastryItem extends StatelessWidget {
 }
 
 class PastryQuantityChange extends StatefulWidget {
-  const PastryQuantityChange(
-      {super.key,
-      required this.initialQuantity,
-      required this.onQuantityChanged});
+  const PastryQuantityChange({
+    super.key,
+    required this.initialQuantity,
+    required this.onQuantityChanged,
+  });
 
   final int initialQuantity;
   final Function(int) onQuantityChanged;
@@ -264,6 +269,9 @@ class Checkout extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () {},
+              style: FilledButton.styleFrom(
+                backgroundColor: colorScheme.secondary,
+              ),
               child: Text(
                 'Checkout',
                 style: textTheme.labelLarge

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:ambataapp/data/repository/authentication/authentication_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../authentication/authentication_exception.dart';
 import '../../model/user.dart';
@@ -19,10 +20,18 @@ class DefaultAuthenticationRepository extends AuthenticationRepository {
 
   @override
   Stream<User> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
+    return _firebaseAuth
+        .authStateChanges()
+        .delay(const Duration(milliseconds: 1500))
+        .map((firebaseUser) {
       final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
       return user;
     });
+  }
+
+  @override
+  Future<User> get currentUser async {
+    return await user.first;
   }
 
   @override
