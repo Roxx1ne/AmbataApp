@@ -62,8 +62,10 @@ class DefaultAuthenticationRepository extends AuthenticationRepository {
 
       await _firebaseAuth.signInWithCredential(credential);
     } on firebase_auth.FirebaseAuthException catch (e) {
+      print('exceptiongoogle: $e');
       throw SignInWithGoogleFailure.fromCode(e.code);
-    } catch (_) {
+    } catch (e) {
+      print('exceptiongoogle: $e');
       throw const SignInWithGoogleFailure();
     }
   }

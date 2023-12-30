@@ -12,7 +12,20 @@
           "package_name": "com.example.projek_ambata"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "674324659963-e482nh7ir9o9rb4ta286aenehsht66ol.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.projek_ambata",
+            "certificate_hash": "1fdd99706e1bf646458fba244d4b38fe9528d332"
+          }
+        },
+        {
+          "client_id": "674324659963-i6g96rhne6oo90vs4pjllhbh3p9isqid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCgWWYvb_hnBi6yl6BCiGhxjMF80L2u1O4"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "674324659963-i6g96rhne6oo90vs4pjllhbh3p9isqid.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "674324659963-pffqa42jvvit4ck5qshpi7mtks2nh943.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.projekAmbata"
+              }
+            }
+          ]
         }
       }
     }
