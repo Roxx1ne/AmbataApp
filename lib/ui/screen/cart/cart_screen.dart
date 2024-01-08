@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../checkout/checkout_screen.dart';
 
 import '../../../common/currency_formatter.dart';
 import '../../../data/repository/cart/cart_repository.dart';
@@ -78,7 +79,9 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
               Checkout(
-                totalPrice: uiState.data.entries.map((entry) => entry.key.price * entry.value).sum,
+                totalPrice: uiState.data.entries
+                    .map((entry) => entry.key.price * entry.value)
+                    .sum,
               )
             ],
           ),
@@ -268,7 +271,12 @@ class Checkout extends StatelessWidget {
               ],
             ),
             FilledButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CheckoutPage()),
+                );
+              },
               style: FilledButton.styleFrom(
                 backgroundColor: colorScheme.secondary,
               ),

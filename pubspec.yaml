@@ -80,6 +80,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/img/cover.png
+    - assets/img/dana.png
+    - assets/img/ovo.png
+    - assets/img/gopay.png
     - assets/img/1recent.png
     - assets/img/bread1.png
     - assets/img/cake1.png
