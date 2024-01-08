@@ -238,7 +238,7 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               child: Center(
                 child: Text(
-                  'Apply',
+                  'Pay ',
                   style: GoogleFonts.poppins(
                     fontSize: 14.0,
                     color: Colors.white,
